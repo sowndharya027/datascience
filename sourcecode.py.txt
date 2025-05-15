@@ -1,0 +1,57 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+# True emotion distribution
+sns.countplot(data=df, x='true_emotion', order=df['true_emotion'].value_counts().index)
+plt.title("True Emotion Distribution")
+plt.show()
+# Predicted emotion distribution
+sns.countplot(x=predicted_labels)
+plt.title("Predicted Emotion Distribution")
+plt.show()]
+2. Confusion Matrix
+Goal: See how well the model classifies each emotion and where it confuses them.
+[from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+cm = confusion_matrix(y_test, y_pred, labels=class_names)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
+disp.plot(cmap='Blues', xticks_rotation='vertical')
+plt.title("Confusion Matrix")
+plt.show()]
+3. Classification Report
+Goal: Evaluate precision, recall, F1-score for each emotion.
+[from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred, target_names=class_names))]
+4. Word Clouds by Emotion
+Goal: Visualize the most frequent words associated with each emotion.
+[from wordcloud import WordCloud
+for emotion in df['true_emotion'].unique():
+    text = " ".join(df[df['true_emotion'] == emotion]['text'])
+    wordcloud = WordCloud(width=800, height=400).generate(text)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title(f"Word Cloud for {emotion}")
+    plt.show()]
+5. Attention Visualization (Transformer Models)
+Goal: Understand which words the model focuses on while predicting emotions.
+Tools:
+BERTViz
+Hugging Face’s transformers with attention output
+6. Feature Importance (Traditional ML)
+Goal: See which words (features) are most influential for each emotion.
+[import numpy as np
+feature_names = vectorizer.get_feature_names_out()
+for i, class_label in enumerate(class_names):
+    top_features = np.argsort(model.coef_[i])[-10:]
+    print(f"Top words for {class_label}: {[feature_names[j] for j in top_features]}")]
+7. Misclassification Analysis
+Goal: See real examples where the model fails — great for debugging.
+[wrong_preds = df[(y_pred != y_test)]
+print(wrong_preds[['text', 'true_emotion', 'predicted_emotion']].head())]
+8. SHAP or LIME Explanations
+Goal: Explain individual predictions in detail.
+[import shap
+explainer = shap.Explainer(model.predict, X_test)
+shap_values = explainer(X_test[:10])
+shap.plots.text(shap_values[0])]
+Optional: Interactive Dashboard
+Use Streamlit or Plotly Dash to display all visualizations in an interactive format.
